@@ -1,0 +1,17 @@
+.App {
+  margin: 2.5em;
+}
+
+button.copied {
+  color: white;
+  background-color: var(--chakra-colors-green-400);
+}
+
+button.copied:hover {
+  color: white;
+  background-color: var(--chakra-colors-green-400);
+}
+
+textarea {
+  min-height: 30em;
+}
