@@ -9,9 +9,15 @@ import {
   Button,
   ChakraProvider,
   Input,
+  Select,
 } from "@chakra-ui/react";
 
 import "./App.css";
+
+type AudioFormat = "m4a" | "mp3";
+const YOUTUBE_AUDIO_FORMATS: Map<AudioFormat, string> = new Map([
+  ["m4a", "140"],
+]);
 
 const CopyButton = ({
   data,
@@ -75,6 +81,11 @@ function App() {
   const [path, setPath] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [audioFormat] = useState<AudioFormat>("m4a");
+
+  // This line assumes that the browser does not have access to the local filesystem
+  // and assumes any path string with the protocol deliiter to be a remote path.
+  const isRemotePath = path.includes("://");
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const [firstFile] = acceptedFiles;
@@ -99,12 +110,15 @@ function App() {
 
     let options = "";
     if (path.includes("youtube")) {
-      options = "-f 140";
+      options = `-f ${YOUTUBE_AUDIO_FORMATS.get(audioFormat)}`;
     } else if (path.includes("soundcloud")) {
-      options = "-x --audio-format m4a";
+      options = `-x --audio-format ${audioFormat}`;
+    }
+    if (ffmpegTrimArgs) {
+      options += ` --postprocessor-args "${ffmpegTrimArgs}"`;
     }
     return `youtube-dl ${options} --add-metadata ${path}`;
-  }, [path]);
+  }, [path, ffmpegTrimArgs, audioFormat]);
 
   const ffmpegCmd = useMemo(() => {
     if (!path || !path.includes(".") || !ffmpegTrimArgs) return "";
@@ -114,20 +128,7 @@ function App() {
     const parent = splitPath.join(".");
 
     return `ffmpeg -i "${path}" ${ffmpegTrimArgs} -c copy "${parent}-trim.${ext}"`;
-  }, [ffmpegTrimArgs, path]);
-
-  const singleCmd = useMemo(() => {
-    if (!ffmpegTrimArgs || !path) {
-      return ytdlCmd;
-    }
-
-    let options = "";
-    if (path.includes("youtube")) {
-      options = "-f 140";
-    }
-
-    return `youtube-dl ${options} --youtube-skip-dash-manifest -g ${path} | ffmpeg -i pipe: ${ffmpegTrimArgs} -c copy FILENAME`;
-  }, [ffmpegTrimArgs, path, ytdlCmd]);
+  }, [path, ffmpegTrimArgs]);
 
   const reset = () => {
     setPath("");
@@ -158,6 +159,14 @@ function App() {
               </Button>
             </Td>
           </Tr>
+          <Tr>
+            <Td>Format</Td>
+            <Td>
+              <Select>
+                <option>m4a</option>
+              </Select>
+            </Td>
+          </Tr>
           <DurationInputRow
             label="Start Time"
             onChange={setStartTime}
@@ -168,11 +177,9 @@ function App() {
             onChange={setEndTime}
             value={endTime}
           />
-          <CopiableTextArea label="youtube-dl" value={ytdlCmd} />
-          <CopiableTextArea label="ffmpeg" value={ffmpegCmd} />
           <CopiableTextArea
-            label="One-liner (Experimental)"
-            value={singleCmd}
+            label="Command"
+            value={isRemotePath ? ytdlCmd : ffmpegCmd}
           />
         </Tbody>
       </Table>
