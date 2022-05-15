@@ -1,0 +1,41 @@
+version: "3.7"
+services:
+  server:
+    image: deluan/navidrome:latest
+    restart: unless-stopped
+    user: 1000:1000 # should be owner of volumes
+    ports:
+      - "4533:4533"
+    volumes:
+      - ${DATA_PATH}:/music:ro
+      - ${CONFIG_PATH}/navdrome:/data # 'data' means config in navdrome.
+  ui:
+    container_name: mlib-ui
+    image: node:16.13.1
+    working_dir: /src
+    command: >
+      sh -c "yarn install &&
+             yarn start-port80"
+    volumes:
+      - ./ui:/src
+  adapter:
+    image: python:3.10-slim-bullseye
+    working_dir: /src
+    command: >
+      bash -c "python -m venv docker-venv &&
+               source docker-venv/bin/activate &&
+               pip install -r requirements.txt &&
+               pip freeze > docker-pip-freeze.txt &&
+               python main.py"
+    volumes:
+      - ./adapter:/src
+      - ${DATA_PATH}:/data
+      - ${CONFIG_PATH}/adapter:/config
+  picard:
+    image: mikenye/picard:latest
+    restart: unless-stopped
+    ports:
+      - "5800:5800"
+    volumes:
+      - ${CONFIG_PATH}/picard:/config
+      - ${DATA_PATH}:/storage
