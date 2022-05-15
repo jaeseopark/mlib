@@ -5,7 +5,7 @@ A suite of applications to automate the management of one's music library.
 Applications used in the stack:
 
 * [Navdrome](https://www.navidrome.org/)
-  * Thiss can be replaced with any Subsonic-compatible server.
+  * This can be replaced with any Subsonic-compatible server.
 * [MusicBrainz Picard](https://hub.docker.com/r/mikenye/picard)
 * [youtube-dl](https://youtube-dl.org/)
 
