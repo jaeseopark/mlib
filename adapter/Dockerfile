@@ -8,11 +8,7 @@ COPY requirements.txt setup.py ./
 RUN pip install -r requirements.txt
 
 # Install app module
-COPY config/ config/
-COPY daemon/ daemon/
-COPY watcher/ watcher/
-COPY cleaner/ cleaner/
-COPY scraper/ scraper/
+COPY adapter/ adapter/
 RUN python setup.py install
 
 # Cleanup
