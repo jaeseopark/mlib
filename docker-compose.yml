@@ -1,0 +1,45 @@
+version: "3.7"
+services:
+  # server:
+  #   image: deluan/navidrome:latest
+  #   restart: unless-stopped
+  #   user: 1000:1000 # should be owner of volumes
+  #   ports:
+  #     - "4533:4533"
+  #   volumes:
+  #     - ${DATA_PATH}:/music:ro
+  #     - ${CONFIG_PATH}/navidrome:/data # 'data' means config in navidrome.
+  ui:
+    container_name: mlib-ui
+    image: node:16.13.1
+    working_dir: /src
+    command: sh -c "yarn install && yarn start"
+    ports:
+      - 4534:3000
+    volumes:
+      - ./ui:/src
+  # adapter:
+  #   build:
+  #     context: ./adapter
+  #     dockerfile: Dockerfile
+  #   working_dir: /src
+  #   command: >
+  #     bash -c "pip install -r requirements.txt &&
+  #              pip freeze > docker-pip-freeze.txt &&
+  #              python flaskapp.py"
+  #   ports:
+  #     - 4536:5000
+  #   environment:
+  #     - API_VERSION=${API_VERSION}
+  #   volumes:
+  #     - ./adapter:/src
+  #     - ${DATA_PATH}:/data
+  #     - ${CONFIG_PATH}/adapter:/config
+  # picard:
+  #   image: mikenye/picard:latest
+  #   restart: unless-stopped
+  #   ports:
+  #     - 4535:5800
+  #   volumes:
+  #     - ${CONFIG_PATH}/picard:/config
+  #     - ${DATA_PATH}:/storage

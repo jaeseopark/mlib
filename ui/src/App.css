@@ -1,5 +1,7 @@
 .App {
   margin: 2.5em;
+  width: 75em;
+  max-width: 75em;
 }
 
 button.copied {
