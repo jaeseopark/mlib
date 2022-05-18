@@ -11,22 +11,10 @@ Applications used in the stack:
 
 ## Usage
 
-### One-time Setup
-
-1. Checkout this repo, then run:
-    ```bash
-    cp .env.sample .env
-    docker-compose up --build -d
-    ```
-1. Log into Navidrome and create a user account: http://localhost:4533
-1. Take down the stack by running:
-    ```bash
-    docker-compose down -v
-    ```
-1. Open `.env` and enter the user credentials.
-1. Fire up docker-compose again. 
-
-TODO: production build
+```bash
+cp .env.sample .env
+docker-compose up --build -d
+```
 
 ### Next Steps
 
