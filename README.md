@@ -28,10 +28,3 @@ services:
 1. Download songs in the adapter panel: http://localhost:4534
 1. Enjoy the music in Navidrome: http://localhost:4533
 1. (Optional) If the downloaded files' tags aren't fully populated, try Picard: http://localhost:4535
-
-## Development
-
-```bash
-cp .env.sample .env
-docker-compose up --build -d
-```
